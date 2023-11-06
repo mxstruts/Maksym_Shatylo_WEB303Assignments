@@ -10,3 +10,7 @@
 .photo-box.active {
     border-color: #ceb004; /* Add your active border color */
 }
+.modal {
+    position:absolute;
+    z-index: 1000;
+}

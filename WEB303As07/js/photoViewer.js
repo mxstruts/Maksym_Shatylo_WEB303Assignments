@@ -1,13 +1,55 @@
-(function ($) {
-  $.fn.photoViewer = function () {
-    // Your photo viewer plugin code here
+var request;
+var $current;
+var cache = {};
+var $frame = $('#photo-viewer');
+var $thumbs = $('.thumb');
+$(document).on('click', '.thumb', function (e) {
+  var $img;
+  var src = this.href;
 
-    // Handle thumbnail click
-    this.find('.thumbnail').on('click', function () {
-      var photoBox = $(this).closest('.photo-box');
-      photoBox.attr('href', $(this).attr('href'));
+  request = src;
+
+  e.preventDefault();
+  $thumbs.removeClass('active');
+  $(this).addClass('active');
+  if (cache.hasOwnProperty(src)) {
+    if (cache[src].isLoading === false) {
+      crossfade(cache[src].$img);
+    }
+  } else {
+    $img = $('<img/>');
+
+    cache[src] = {
+      $img: $img,
+      isLoading: true,
+    };
+
+    $img.on('load', function () {
+      $img.hide();
+
+      $frame.removeClass('is-loading').append($img);
+      cache[src].isLoading = false;
+      if (request === src) {
+        crossfade($(this));
+      }
     });
+    $frame.addClass('is-loading');
+    $img.attr({
+      src: src,
+      alt: this.title || '',
+    });
+  }
+});
+$('.thumb').eq(0).click();
+function crossfade($img) {
+  if ($current) {
+    $current.stop().fadeOut('slow');
+  }
 
-    return this;
-  };
-})(jQuery);
+  $img.css({
+    marginLeft: -$img.width() / 2,
+    marginTop: -$img.height() / 2,
+  });
+  $img.stop().fadeTo('slow', 1);
+  $current = $img;
+}
