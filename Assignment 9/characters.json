@@ -1,0 +1,16 @@
+[
+  {
+    "firstName": "Harry",
+    "lastName": "Potter",
+    "age": 21,
+    "occupation": "Wizard",
+    "date": "1990-07-31"
+  },
+  {
+    "firstName": "Hermione",
+    "lastName": "Granger",
+    "age": 21,
+    "occupation": "Witch",
+    "date": "1979-09-19"
+  }
+]

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fictional Characters</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      th {
+        cursor: pointer;
+      }
+      .chevron {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="charactersTable">
+      <thead>
+        <tr>
+          <th data-sort="firstName">First Name <span class="chevron"></span></th>
+          <th data-sort="lastName">Last Name <span class="chevron"></span></th>
+          <th data-sort="age">Age <span class="chevron"></span></th>
+          <th data-sort="occupation">Occupation <span class="chevron"></span></th>
+          <th data-sort="date">Date <span class="chevron"></span></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      $(document).ready(function () {
+        let charactersData; // Variable to store characters data
+        let sortedColumn = null;
+        let ascending = true;
+
+        // Function to render characters in the table
+        function renderCharacters(data) {
+          const tbody = $('#charactersTable tbody');
+          tbody.empty();
+          data.forEach((character) => {
+            const row = $('<tr></tr>');
+            row.append(`<td>${character.firstName}</td>`);
+            row.append(`<td>${character.lastName}</td>`);
+            row.append(`<td>${character.age}</td>`);
+            row.append(`<td>${character.occupation}</td>`);
+            row.append(`<td>${character.date}</td>`);
+            tbody.append(row);
+          });
+        }
+
+        // Function to sort characters based on a column
+        function sortCharacters(column) {
+          if (sortedColumn === column) {
+            ascending = !ascending;
+          } else {
+            sortedColumn = column;
+            ascending = true;
+          }
+
+          charactersData.sort((a, b) => {
+            const valueA = a[column];
+            const valueB = b[column];
+            if (valueA < valueB) return ascending ? -1 : 1;
+            if (valueA > valueB) return ascending ? 1 : -1;
+            return 0;
+          });
+
+          renderCharacters(charactersData);
+
+          // Update chevron icons
+          $('th[data-sort]').find('.chevron').text('');
+          const currentChevron = $('th[data-sort="' + column + '"]').find('.chevron');
+          currentChevron.text(ascending ? '▲' : '▼');
+        }
+
+        // Fetch JSON data using AJAX
+        $.ajax({
+          url: 'characters.json', // Replace 'characters.json' with your JSON file path
+          dataType: 'json',
+          success: function (data) {
+            charactersData = data;
+            renderCharacters(charactersData);
+
+            // Sort table on column click
+            $('th[data-sort]').click(function () {
+              const column = $(this).data('sort');
+              sortCharacters(column);
+            });
+          },
+          error: function () {
+            console.error('Error fetching data.');
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
